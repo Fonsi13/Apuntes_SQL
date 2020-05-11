@@ -1,4 +1,4 @@
-# Apuntes Lenguaje SQL
+ # Apuntes Lenguaje SQL
  
 ## Índice <a name="indice"></a>
  - [Introducción al lenguaje](#intro)
@@ -6,6 +6,8 @@
  - [Sintaxis](#sint)
    - [SELECT](#sel)
      - [AS](#as)
+     - [REPLACE](#rp)
+     - [ROUND](#rnd)
    - [WHERE](#w)
      - [AND](#and)
      - [IN](#in)
@@ -13,6 +15,13 @@
      - [XOR](#xor)
      - [BETWEEN](#b)
      - [LIKE](#like)
+     - [CONCAT](#cct)
+     - [LENGTH](#len)
+     - [LEFT](#lft)
+     - [NOT](#not)
+     - [SELECTS Anidados](#ani)
+     - [ALL](#all)
+     
 
 ### Introducción al lenguaje <a name="intro"></a>
 
@@ -62,7 +71,7 @@ FROM world;
 
 > Podemos seleccionar una o varias cosas a la vez, y siempre de una tabla existente
 
-Una variación del propio *SELECT* es *SELECT DISTINCT*, con el cuál estaríamos pidiendo que se muestre una sola vez el dato seleccionado, por ejemplo:
+Una variación del propio *SELECT* es **SELECT DISTINCT**, con el cuál estaríamos pidiendo que se muestre una sola vez el dato seleccionado, por ejemplo:
 ```SQL
 SELECT DISTINCT continent
 FROM world;
@@ -87,6 +96,39 @@ SELECT name
 FROM world AS "Mundo";
 ```
 
+[Volver al índice](#indice)
+
+##### REPLACE <a name="rp"></a>
+
+Este componente nos permite remplazar unos caracteres de una cadena por otros que indiquemos.
+
+Debemos indicar primero el campo que queremos modificar, después los caracteres a reemplazar y por último el remplazo:
+```SQL
+SELECT REPLACE(name, 'e', 'o')
+FROM world;
+```
+
+> Mostramos el nombre de los países, pero donde debería haber una e hay una o
+
+[Volver al índice](#indice)
+
+##### ROUND <a name="rnd"></a>
+
+Gracias a este componente podemos mostrar datos numéricos redondeados.
+
+La sintaxis sería *ROUND(número,  valor)*, con valor nos referimos a la precisión con la que queremos aproximar:
+```SQL
+SELECT name, ROUND(population/1000000, 2), ROUND(GDP/1000000000, 2)
+FROM world
+WHERE continent = 'South America';
+```
+> Podemos redondear a las centésimas, como en el ejemplo anterior donde mostramos en millones la población y en billones el Producto Interior Bruto
+```SQL
+SELECT name, ROUND(GDP/population, -3)
+FROM world
+WHERE gdp >= 1000000000000;
+```
+> También podemos redondear hacia las decenas, centenas, millares,etc, pero en este caso debemos indicarlo con un número negativo
 
 [Volver al índice](#indice)
 
@@ -203,9 +245,9 @@ FROM world
 WHERE name LIKE '_t___';
 ```
 
-> Nombre cuya segunda letra sea una "l" y en total sean cinco caracteres
+> Nombre cuya segunda letra sea una "t" y en total sean cinco caracteres
 
-La versión opuesta a *LIKE* es *NOT LIKE*, la cual tendría las misma funciones que con el significado contrario: 
+La versión opuesta a *LIKE* es **NOT LIKE**, la cual tendría las misma funciones que con el significado contrario: 
 
 ```SQL
 SELECT name 
@@ -214,5 +256,113 @@ WHERE name NOT LIKE 'a%n';
 ```
 
 > Mostraría los nombre que no empiezan por "a" y a la vez no acaban en "n"
+
+[Volver al índice](#indice)
+
+##### CONCAT <a name="cct"></a>
+
+Usando este componente podemos concatenar valores, creando condiciones como la siguiente:
+```SQL
+SELECT name, capital
+FROM world
+WHERE capital LIKE CONCAT('%', name, '%');
+```
+
+> Seleccionamos los países cuya capital contenga el nombre del propio país
+
+[Volver al índice](#indice)
+
+##### LENGTH <a name="len"></a>
+
+Este componente nos va a devolver el total de caracteres que contenga la cadena que le pasamos:
+```SQL
+SELECT name, capital
+FROM world
+WHERE LENGTH(name) = LENGTH(capital);
+```
+
+> Seleccionamos los países cuya capital contenga el mismo número de caracteres que el nombre del propio país
+
+```SQL
+SELECT name, LENGTH(name) AS 'Cantidad de letras'
+FROM world;
+```
+
+> También lo podemos usar en el SELECT si queremos
+
+[Volver al índice](#indice)
+
+##### LEFT <a name="lft"></a>
+
+Podemos  extraer *n* caracteres del principio de la cadena que le pasemos a este componente:
+
+```SQL
+SELECT name, capital
+FROM world
+WHERE LEFT(name,1) = LEFT(capital,1) AND name<>capital;
+```
+
+> Saca los países cuya capital empieza por la misma letra, sin tener ambas el mismo nombre
+
+```SQL
+SELECT name, LEFT(name, 3) AS 'INICIALES'
+FROM world;
+```
+> Podemos usarlo en el SELECT también, mostrando las iniciales de los países por ejemplo
+
+[Volver al índice](#indice)
+
+##### NOT <a name="not"></a>
+
+Usamos este componente para excluir valores en un condición:
+```SQL
+SELECT yr, subject, winner
+FROM nobel
+WHERE yr = 1980 AND subject NOT IN ('Chemistry', 'Medicine');
+```
+
+> Seleccionamos los ganadores de un nobel en 1980, excluyendo los campos de Medicina y Química
+
+[Volver al índice](#indice)
+
+##### SELECTS Anidados <a name="ani"></a>
+Podemos hacer predicados bastantes complejos haciendo una subconsulta en la condición, esta debe ir en paréntesis:
+```SQL
+SELECT name, population
+FROM where
+WHERE population > (SELECT population
+					FROM world
+					WHERE name = 'Brasil');
+```
+> Sacamos los países que tengan una población mayor que Brasil
+
+Existe otro tipo de consultas del mismo estilo, llamadas **SUBCONSULTA SINCRONIZADA** o **SUBCONSULTA CORRELACIONADA**, en la que la subconsulta toma datos de la consulta de fuera:
+```SQL
+SELECT name
+FROM world
+WHERE population >= ALL(SELECT population
+                        FROM world
+                        WHERE population>0);
+```
+
+> Nos muestra el país con más población del mundo
+
+[Volver al índice](#indice)
+
+##### ALL <a name="all"></a>
+
+En la última consulta de ejemplo he usado un componente que no había explicado, ALL.
+
+Este componente sirve para comprobar que todas las tuplas cumplen la condición:
+```SQL
+SELECT continent, name, area
+FROM world x
+WHERE area >= ALL (SELECT area
+                   FROM world y
+                   WHERE y.continent=x.continent
+                   AND area>0);
+```
+
+> Seleccionamos cada continente y su país más extenso
 
 [Volver al índice](#indice)
