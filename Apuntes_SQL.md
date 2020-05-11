@@ -1,4 +1,4 @@
- # Apuntes Lenguaje SQL
+  # Apuntes Lenguaje SQL
  
 ## Índice <a name="indice"></a>
  - [Introducción al lenguaje](#intro)
@@ -24,7 +24,7 @@
      
 
 ### Introducción al lenguaje <a name="intro"></a>
-
+---
 SQL es es un lenguaje utilizado en programación, diseñado para administrar, y recuperar información de sistemas de gestión de bases de datos relacionales.
 
 SQL sirve para insertar datos, hacer consultas, actualizaciones y borrado, la creación y modificación de esquemas y el control de acceso a los datos de una base.
@@ -43,7 +43,7 @@ Nosotros vamos a tratar con DQL, para poder realizar las consultas a una base de
 [Volver al índice](#indice)
 
 ### Estructura <a name="estru"></a>
-
+---
 A la hora de realizar una consulta esta generalmente tendrá una estructura determinada que puede variar. Contendrá:
 
  - Un SELECT, componente que selecciona los datos que queremos mostrar.
@@ -55,7 +55,7 @@ A la hora de realizar una consulta esta generalmente tendrá una estructura dete
 [Volver al índice](#indice)
 
 ### Sintaxis <a name="sint"></a>
-
+---
 ##### SELECT  <a name="sel"></a>
 ---
 Una consulta básica para ir probando el *SELECT* podría ser lo siguiente:
