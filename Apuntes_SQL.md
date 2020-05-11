@@ -21,6 +21,13 @@
      - [NOT](#not)
      - [SELECTS Anidados](#ani)
      - [ALL](#all)
+     - [SUM](#sum)
+     - [COUNT](#cnt)
+     - [AVG](#avg)
+     - [MAX](#max)
+     - [ORDER BY](#ord)
+     - [GROUP BY](#grp)
+     - [HAVING](#hav)
      
 
 ### Introducción al lenguaje <a name="intro"></a>
@@ -364,5 +371,99 @@ WHERE area >= ALL (SELECT area
 ```
 
 > Seleccionamos cada continente y su país más extenso
+
+[Volver al índice](#indice)
+
+##### SUM <a name="sum"></a>
+
+Este componente devuelve el total de los valores de las tuplas de un campo numérico:
+```SQL
+SELECT SUM(population) AS 'Poblacion'
+FROM world;
+```
+
+> Nos devuelve la población mundial
+
+[Volver al índice](#indice)
+
+##### COUNT <a name="cnt"></a>
+
+Este componente devuelve la cantidad de valores que cumplen el predicado:
+```SQL
+SELECT COUNT(name)
+FROM world
+WHERE area >= 1000000;
+```
+
+> Nos devuelve la cantidad de países con un área como mínimo de 1000000 km2
+
+[Volver al índice](#indice)
+
+##### AVG <a name="avg"></a>
+
+Este componente devuelve el valor promedio de una columna numérica:
+```SQL
+SELECT AVG(population)
+FROM world;
+```
+
+> Nos devuelve la población media mundial
+
+[Volver al índice](#indice)
+
+##### MAX <a name="max"></a>
+
+Este componente devuelve el valor máximo de una columna numérica:
+```SQL
+SELECT MAX(population)
+FROM world;
+```
+
+> Nos devuelve la mayor población que existe
+
+[Volver al índice](#indice)
+
+##### ORDER BY <a name="ord"></a>
+
+Con este componente tenemos la posibilidad de ordenar los resultados de manera ascendente (ASC) o descendiente (DESC):
+
+> Por defecto es en orden ascendente
+
+```SQL
+SELECT name, population
+FROM world
+ORDER BY population DESC;
+```
+
+> Nos devuelve los países y su población, ordenados de mayor a menor habitantes
+
+[Volver al índice](#indice)
+
+##### GROUP BY <a name="grp"></a>
+
+Con este componente podemos agrupar aquellas tuplas que tengan el mismo resultado:
+
+```SQL
+SELECT continent, COUNT(name) AS 'Nº Países'
+FROM world
+GROUP BY continent;
+```
+
+> Nos devuelve los continentes y el número de países de cada uno
+
+[Volver al índice](#indice)
+
+##### HAVING <a name="hav"></a>
+
+Este componente sirve como flitro a la hora de agrupar con *GROUP BY*, podemos aplicar los agregados antes explicados como SUM, COUNT, etc.:
+
+```SQL
+SELECT continent
+FROM world
+GROUP BY continent
+HAVING SUM(population) > 1000000000;
+```
+
+> Nos devuelve los continentes cuya población supera los mil millones
 
 [Volver al índice](#indice)
