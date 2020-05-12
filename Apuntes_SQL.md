@@ -1,4 +1,4 @@
-  # Apuntes Lenguaje SQL
+ # Apuntes Lenguaje SQL
  
 ## Índice <a name="indice"></a>
  - [Introducción al lenguaje](#intro)
@@ -28,6 +28,10 @@
      - [ORDER BY](#ord)
      - [GROUP BY](#grp)
      - [HAVING](#hav)
+     - [JOIN](#join)
+     - [CASE WHEN](#case)
+     - [COALESCE](#coal)
+     - [NULL](#null)
      
 
 ### Introducción al lenguaje <a name="intro"></a>
@@ -465,5 +469,96 @@ HAVING SUM(population) > 1000000000;
 ```
 
 > Nos devuelve los continentes cuya población supera los mil millones
+
+[Volver al índice](#indice)
+
+##### JOIN <a name="join"></a>
+
+Si queremos usar dos o más tablas en una consulta debemos usar este componente, que resultará en otra tabla con la suma de las columnas de ambas. Para un mejor uso se añade el componente ON, que nos permite especificar en que campos coinciden las dos tablas:
+
+```SQL
+SELECT player, teamid, stadium, mdate
+FROM game JOIN goal ON (game.id = goal.matchid)
+WHERE teamid = 'GER';
+```
+
+> Entre paréntesis van los atributos coincidentes de las dos tablas, para evitar una confusión es preferible definirlos como "tabla.atributo"
+
+Existen diferentes tipos de JOINs:
+
+ - INNER JOIN: funciona igual que un JOIN normal, pero se salta los valores nulos
+ - LEFT JOIN: saca todos los elementos de la tabla a la izquierda, aunque en la derecha sean nulos
+ - RIGHT JOIN: saca todos los elementos de la tabla a la derecha, aunque en la izquierda sean nulos
+
+```SQL
+SELECT teacher.name, dept.name
+FROM teacher INNER JOIN dept ON (teacher.dept=dept.id);
+```
+```SQL
+SELECT teacher.name, dept.name
+FROM teacher LEFT JOIN dept ON (teacher.dept=dept.id);
+```
+```SQL
+SELECT teacher.name, dept.name
+FROM teacher RIGHT JOIN dept ON (teacher.dept=dept.id);
+```
+[Volver al índice](#indice)
+
+##### CASE WHEN <a name="case"></a>
+
+Este componente nos permite devolver diferentes valores en función de diferentes condiciones.
+
+En caso de que no sea de ninguna condición, y no haya *ELSE*, devolverá el valor NULL. 
+
+```SQL
+SELECT name,  
+CASE dept WHEN 1 THEN 'Sci'
+          WHEN 2 THEN 'Sci'
+          ELSE 'Art'
+END 
+FROM teacher;
+```
+
+> Dependiendo del departamento en el que esté, se le asignará o "Sci" o "Art"
+
+[Volver al índice](#indice)
+
+##### COALESCE <a name="coal"></a>
+
+Le pasaremos cualquier número de parámetros a este componente y nos devolverá el primero que no sea nulo.
+
+```SQL
+  COALESCE(x,y,z) = x si x no es NULL
+  COALESCE(x,y,z) = y si x es NULL e y no es NULL
+  COALESCE(x,y,z) = z si x e y son NULL pero z no es NULL
+  COALESCE(x,y,z) = NULL si x,y,z son todas NULL
+```
+Ejemplo:
+```SQL
+SELECT name,
+       COALESCE(mobile,'07986 444 2266') AS 'mobile number'
+FROM teacher;
+```
+> Muestra el número de móvil de los profesores, si no tienen, muestra '07986 444 2266'
+
+[Volver al índice](#indice)
+
+##### NULL <a name="null"></a>
+
+Con este componente filtramos aquellos datos que son o no nulos.
+
+```SQL
+SELECT name
+FROM teacher
+WHERE dept IS NULL;
+```
+> Muestra los profesores que **no tienen** un departamento asignado
+
+```SQL
+SELECT name
+FROM teacher
+WHERE dept IS NOT NULL;
+```
+> Muestra los profesores que **tienen** un departamento asignado
 
 [Volver al índice](#indice)
